@@ -1,0 +1,108 @@
+`default_nettype none
+// Empty top module
+
+module top (
+  // I/O ports
+  input  logic hz100, reset,
+  input  logic [20:0] pb,
+  output logic [7:0] left, right,
+         ss7, ss6, ss5, ss4, ss3, ss2, ss1, ss0,
+  output logic red, green, blue,
+
+  // UART ports
+  output logic [7:0] txdata,
+  input  logic [7:0] rxdata,
+  output logic txclk, rxclk,
+  input  logic txready, rxready
+);
+  // Your code goes here...
+  
+end 
+
+module entangle(
+  input logic qbit[1][2],
+  output logic qbit1[1][2],
+);
+
+  qbit1 = qbit; 
+endmodule
+
+module matrix_mult(
+  
+);
+
+endmodule
+
+module hadamard_gate(
+  input logic qbit [1][2],
+  output logic qbit_new [1][2]
+)
+  logic hadamard_gate [2][2] = '{
+    '{1, 1},
+    '{1, -1}
+  };
+  
+  matrix_mult(hadamard_gate, qbit, qbit_new);
+endmodule 
+
+module x_flip(
+  input logic qbit [1][2],
+  output logic qbit_new [1][2]
+)
+  logic x_gate [2][2] = '{
+    '{0, 1},
+    '{1, 0}
+  };
+  
+  matrix_mult(x_gate, qbit, qbit_new);
+endmodule 
+
+module z_flip(
+  input logic qbit [1][2],
+  output logic qbit_new [1][2]
+)
+  logic z_gate [2][2] = '{
+    '{1, 0},
+    '{0, -1}
+  };
+  
+  matrix_mult(z_gate, qbit, qbit_new);
+endmodule 
+
+module shors_error_check(
+  input logic qbit [1][2],
+  input logic x_flip, 
+  input logic z_flip, 
+  input logic location [2:0],
+  output logic error_bit1,
+  output logic error_bit2
+);
+
+  logic qbit1[1][2];
+  logic qbit2[1][2];
+  logic qbit3[1][2]; 
+  logic qbit4[1][2];
+  logic qbit5[1][2];
+  logic qbit6[1][2];
+  logic qbit7[1][2];
+  logic qbit8[1][2];
+  
+  entangle(qbit, qbit1);
+  entangle(qbit, qbit2);
+  
+  logic qbit_h[1][2];
+  logic qbit1_h[1][2];
+  logic qbit2_h[1][2];
+  hadamard_gate(qbit, qbit_h);
+  hadamard_gate(qbit1, qbit1_h);
+  hadamard_gate(qbit2, qbit2_h);
+  
+  entangle(qbit_h, qbit3);
+  entangle(qbit_h, qbit4);
+  entangle(qbit1_h, qbit5);
+  entangle(qbit1_h, qbit6);
+  entangle(qbit2_h, qbit7);
+  entangle(qbit2_h, qbit8);
+  
+endmodule
+end
