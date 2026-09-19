@@ -1,59 +1,76 @@
 `default_nettype none
 // Empty top module
 
-module top (
-  // I/O ports
-  input  logic hz100, reset,
-  input  logic [20:0] pb,
-  output logic [7:0] left, right,
-         ss7, ss6, ss5, ss4, ss3, ss2, ss1, ss0,
-  output logic red, green, blue,
-
-  // UART ports
-  output logic [7:0] txdata,
-  input  logic [7:0] rxdata,
-  output logic txclk, rxclk,
-  input  logic txready, rxready
-);
+module top ();
 
   // Your code goes here...
-  //Matrix A
-  //[a1 a2]
-  //[a3 a4]
-  logic a1 = pb[7];
-  logic a2 = pb[6];
-  logic a3 = pb[3];
-  logic a4 = pb[2];
-  logic[3:0] A = {a1, a2, a3, a4};
-  //Matirx B
-  //[b1]
-  //[b2]
-  logic b1 = pb[4];
-  logic b2 = pb[0];
-  logic[1:0] B = {b1, b2};
-  // assign A = {a1, a2, a3, a4};
-  // assign B = {
+  logic en1, en2, en3, out1, out2;
+  logic[1:0] error;
+  logic[2:0] counter;
+  logic[3:0] q1, q2, h1, h2, x1, x2, z1, z2;
+  logic[7:0] X, Z, H;
+
+  assign X = 4'00 01 01 00;
+  assign Z = 4'01 00 00 11;
+  assign H = 4'01 01 01 11;
+
+  assign error = {out1, out2};
+
+
+
+  always_ff @posedge(hz100 or error) begin
+    if(error) begin
+      counter <= '0;
+      q1 <= 4'01 00;
+      q2 <= 4'01 00;
+    end else begin
+      case(counter)
+        3'd0: q1 <= h1; q2 <=h2;
+        3'd1: begin
+                if(en1) q1 <= z1; 
+                if(en3) q2 <= z2;
+              end
+        3'd3: if(en2) q1 <= z1; q2 <= z2;
+        3'd4: q1 <= h1; q2 <=h2;
+        3'd5: out1 <= q1[0]; out2 <= q2[0];
+        default: counter <= 0;
+      endcase
+    end
+
+  end
+
+  always_comb begin
+    H1 matrixMultiply (H, q1, h1);
+    H2 matrixMultiply (H, q2, h2);
+    Z1 matrixMultiply (H, q1, z1);
+    Z2 matrixMultiply (H, q2, z2);
+    X1 matrixMultiply (H, q1, x1);
+    X2 matrixMultiply (H, q2, x2);
+  end
   
-  mm1 matrixMultiply (A, B, right[1:0]);
   
   
 endmodule
 
 // Add more modules down here...
 module matrixMultiply (
-  input logic[3:0] A,
-  input logic[1:0] B,
-  output logic [1:0] result
+  input logic[7:0] A,
+  input logic[3:0] B,
+  output logic [3:0] result
 );
   
-  logic r1, r2, c1, c2;
+  logic[1:0] r1, r2
+  logic c1, c2;
   
-  //result = [A[3]*B[1]+A[2]*B[0]]
-  //         [A[1]*B[1]+A[0]*B[0]]
+  
+  assign r1[1] = r1[0] & A[5]^B[1] & !A[6]&B[2];
+  assign r2[1] = r2[0] & A[1]^B[1] & !A[2]&B[2];
   assign result = {r1, r2};
-  
-  row1 fa(A[3]&B[1], A[2]&B[0], 0, r1, c1);
-  row2 fa(A[1]&B[1], A[0]&B[0], 0, r2, c2);
+
+  //result = [A[6]*B[2]+A[4]*B[0]]
+  //         [A[2]*B[2]+A[0]*B[0]]
+  row1 fa(A[6]&B[2], A[4]&B[0], 0, r1[0], c1);
+  row2 fa(A[2]&B[2], A[0]&B[0], 0, r2[0], c2);
   
 endmodule
 // 1-bit full adder (part 1)
