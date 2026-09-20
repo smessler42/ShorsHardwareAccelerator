@@ -15,8 +15,8 @@ module top (
   logic[7:0] X, Z, H;
 
   assign X = 8'00 01 01 00;
-  assign Z = 4'01 00 00 11;
-  assign H = 4'01 01 01 11;
+  assign Z = 8'01 00 00 11;
+  assign H = 8'01 01 01 11;
 
   assign error = {out1, out2};
 
@@ -44,7 +44,7 @@ module top (
         end
         3'd4: begin
           q1 <= h1; 
-          q2 <=h2;
+          q2 <= h2;
         end
         3'd5: begin
           out1 <= q1[0]; 
