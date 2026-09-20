@@ -1,16 +1,20 @@
 `default_nettype none
 // Empty top module
 
-module top ();
+module top (
+  input logic hz100,
+  input logic reset_n,
+  input logic en1, en2, en3,
+  output logic [1:0] error,
+  output logic out1, out2
+);
 
   // Your code goes here...
-  logic en1, en2, en3, out1, out2;
-  logic[1:0] error;
   logic[2:0] counter;
   logic[3:0] q1, q2, h1, h2, x1, x2, z1, z2;
   logic[7:0] X, Z, H;
 
-  assign X = 4'00 01 01 00;
+  assign X = 8'00 01 01 00;
   assign Z = 4'01 00 00 11;
   assign H = 4'01 01 01 11;
 
@@ -21,32 +25,43 @@ module top ();
   always_ff @posedge(hz100 or error) begin
     if(error) begin
       counter <= '0;
-      q1 <= 4'01 00;
-      q2 <= 4'01 00;
+      q1 <= 4'b0100;
+      q2 <= 4'b0100;
     end else begin
+      counter <= counter + 3'd1
       case(counter)
-        3'd0: q1 <= h1; q2 <=h2;
+        3'd0: begin
+          q1 <= h1; 
+          q2 <=h2;
+        end
         3'd1: begin
                 if(en1) q1 <= z1; 
                 if(en3) q2 <= z2;
               end
-        3'd3: if(en2) q1 <= z1; q2 <= z2;
-        3'd4: q1 <= h1; q2 <=h2;
-        3'd5: out1 <= q1[0]; out2 <= q2[0];
+        3'd3: begin 
+          if(en2) q1 <= z1; 
+          q2 <= z2;
+        end
+        3'd4: begin
+          q1 <= h1; 
+          q2 <=h2;
+        end
+        3'd5: begin
+          out1 <= q1[0]; 
+          out2 <= q2[0];
+        end
         default: counter <= 0;
       endcase
     end
 
   end
 
-  always_comb begin
-    H1 matrixMultiply (H, q1, h1);
-    H2 matrixMultiply (H, q2, h2);
-    Z1 matrixMultiply (H, q1, z1);
-    Z2 matrixMultiply (H, q2, z2);
-    X1 matrixMultiply (H, q1, x1);
-    X2 matrixMultiply (H, q2, x2);
-  end
+  matrixMultiply H1 (.A(H), .B(q1), .result(h1));
+  matrixMultiply H2 (.A(H), .B(q2), .result(h2));
+  matrixMultiply Z1 (.A(Z), .B(q1), .result(z1));
+  matrixMultiply Z2 (.A(Z), .B(q2), .result(z2));
+  matrixMultiply X1 (.A(X), .B(q1), .result(x1));
+  matrixMultiply X2 (.A(X), .B(q2), .result(x2));
   
   
   
@@ -69,11 +84,12 @@ module matrixMultiply (
 
   //result = [A[6]*B[2]+A[4]*B[0]]
   //         [A[2]*B[2]+A[0]*B[0]]
-  row1 fa(A[6]&B[2], A[4]&B[0], 0, r1[0], c1);
-  row2 fa(A[2]&B[2], A[0]&B[0], 0, r2[0], c2);
+  row1 fa(.a(A[6]&B[2]), .b(A[4]&B[0]), .ci('0), .s(r1[0]), .co(c1));
+  row1 fa(.a(A[2]&B[2]), .b(A[0]&B[0]), .ci('0), .s(r2[0]), .co(c2));
+
   
 endmodule
-// 1-bit full adder (part 1)
+// 1-bit full adder 
 module fa (
   input logic a,
   input logic b,
