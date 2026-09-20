@@ -26,9 +26,7 @@ module top (
         '{2'sd0, -2'sd1}
     };    
 
-    logic signed [1:0] q1, q2 [2][1];
-
-    
+    logic signed [1:0] q1, q2 [2][1]; 
 
 
 endmodule
@@ -41,7 +39,7 @@ endmodule
     //     '{2'sd0, 2'sd0, 2'sd1, 2'sd0}
     // };
 
-module CNOTentangled (
+module cnot_entangled (
     input logic signed [1:0] q1, q2 [2][1];
     output logic signed [1:0] q1ent, q2ent [2][1]
 );
@@ -116,4 +114,53 @@ module fa (
   // a XOR b XOR ci
   assign s = a ^ b ^ ci;
   assign co = (a & b) | (a & ci) | (b & ci);
+endmodule
+
+module bit_flip_detect(
+    input logic signed [1:0] q1, q2 [2][1];
+    output logic[1:0] error
+);
+
+    logic signed [1:0] e1, e2, temp, h1, h2, c11, c12, c21, c22 [2][1];
+
+    always_ff @posedge(hz100 or error) begin
+        if(error) begin
+            counter <= '0;
+            e1 <= '{'{2'sd0}, '{2'sd1}};
+            e2 <= '{'{2'sd0}, '{2'sd1}};
+        end else begin
+        counter <= counter + 3'd1
+        case(counter)
+            3'd0: begin
+            e1 <= h1; 
+            e2 <= h2;
+            end
+            3'd1: begin
+            e1 <= c11; 
+            e2 <= c21;
+            end
+            3'd3: begin 
+            e1 <= c12; 
+            e2 <= c22;
+            end
+            3'd4: begin
+            q1 <= h1; 
+            q2 <= h2;
+            end
+            3'd5: begin
+            out1 <= q1[0]; 
+            out2 <= q2[0];
+            end
+            default: counter <= 0;
+        endcase
+        end
+    end
+
+  matrixMultiply2x2 H1 (.A(HGATE), .B(e1), .result(h1));
+  matrixMultiply2x2 H2 (.A(HGATE), .B(e2), .result(h2));
+  cnot_entangled C11(.q1(q1), .q2(e1), .q1ent(temp), .q2ent(c11));
+  cnot_entangled C12(.q1(q2), .q2(e1), .q1ent(temp), .q2ent(c12));
+  cnot_entangled C21(.q1(q3), .q2(e2), .q1ent(temp), .q2ent(c21));
+  cnot_entangled C22(.q1(q2), .q2(e2), .q1ent(temp), .q2ent(c22));  
+
 endmodule
