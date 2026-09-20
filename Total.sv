@@ -164,3 +164,104 @@ module bit_flip_detect(
   cnot_entangled C22(.q1(q2), .q2(e2), .q1ent(temp), .q2ent(c22));  
 
 endmodule
+
+
+
+
+module bit_error (
+  input logic [1:0] error,
+  input logic signed [1:0] in1 [2][1], in2 [2][1], in3 [2][1],
+  output logic signed [1:0] out1 [2][1], out2 [2][1], out3 [2][1]
+);
+
+function automatic void apply_x_flip (
+    input  logic signed [1:0] q_in  [2][1],
+    output logic signed [1:0] q_out [2][1]
+  );
+    q_out[0][0] = q_in[1][0];
+    q_out[1][0] = q_in[0][0];
+  endfunction
+  
+always_comb begin
+    out1 = in1;
+    out2 = in2;
+    out3 = in3;
+
+    case (error)
+      2'b01: begin
+        apply_x_flip(in1, out1);
+      end
+      2'b10: begin
+        apply_x_flip(in2, out2);
+      end
+      2'b11: begin
+        apply_x_flip(in3, out3);
+      end
+      default: begin
+        out1 = in1;
+        out2 = in2;
+        out3 = in3;
+      end
+    endcase
+  end
+  
+  
+endmodule
+
+module sign_error (
+  input logic [3:0] error,
+  input logic signed [1:0] in1 [2][1], in2 [2][1], in3 [2][1], in4 [2][1], in5 [2][1], in6 [2][1], in7 [2][1], in8 [2][1], in9 [2][1], 
+  output logic signed [1:0] out1 [2][1], out2 [2][1], out3 [2][1], out4 [2][1], out5 [2][1], out6 [2][1], out7 [2][1], out8 [2][1], out9 [2][1]
+);
+
+function automatic void apply_z_flip (
+    input  logic signed [1:0] q_in  [2][1],
+    output logic signed [1:0] q_out [2][1]
+  );
+    q_out[0][0] =  q_in[0][0]; 
+    q_out[1][0] = -q_in[1][0]; 
+  endfunction
+  
+  always_comb begin
+    out1 = in1;
+    out2 = in2;
+    out3 = in3;
+    out4 = in4;
+    out5 = in5;
+    out6 = in6;
+    out7 = in7;
+    out8 = in8;
+    out9 = in9;
+
+    case (error)
+      4'd1: apply_z_flip(in1, out1);
+      4'd2: apply_z_flip(in2, out2);
+      4'd3: apply_z_flip(in3, out3);
+      4'd4: apply_z_flip(in4, out4);
+      4'd5: apply_z_flip(in5, out5);
+      4'd6: apply_z_flip(in6, out6);
+      4'd7: apply_z_flip(in7, out7);
+      4'd8: apply_z_flip(in8, out8);
+      4'd9: apply_z_flip(in9, out9);
+
+    endcase
+  end
+
+endmodule
+
+
+module cloning (
+  input logic signed [1:0] in1 [2][1], in2 [2][1], in3 [2][1],
+  output logic signed [1:0] out1 [2][1], out2 [2][1], out3 [2][1]
+);
+
+  logic signed [1:0] int1 [2][1], int2 [2][1];
+  
+  cnot_entangled first (.q1(in1), .q2(in2), .q1ent(int1));
+  cnot_entangled second (.q1(in2), .q2(in3), .q1ent(int2));
+
+  matrixMultiply2x2 H1 (.A(HGATE), .B(in1), .result(out1));
+  matrixMultiply2x2 H2 (.A(HGATE), .B(int2), .result(out2));
+  matrixMultiply2x2 H3 (.A(HGATE), .B(int3), .result(out3));
+
+endmodule
