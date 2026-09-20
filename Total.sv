@@ -33,20 +33,53 @@ module top (
 
 endmodule
 
+
+    // logic signed [1:0] CNOT [4][4] = '{
+    //     '{2'sd1, 2'sd0, 2'sd0, 2'sd0},
+    //     '{2'sd0, 2'sd1, 2'sd0, 2'sd0},
+    //     '{2'sd0, 2'sd0, 2'sd0, 2'sd1},
+    //     '{2'sd0, 2'sd0, 2'sd1, 2'sd0}
+    // };
+
 module CNOTentangled (
     input logic signed [1:0] q1, q2 [2][1];
+    output logic signed [1:0] q1ent, q2ent [2][1]
 );
 
     logic signed [1:0] qCombined [4][1];
     logic [1:0] values;
 
-    
-
     always_comb begin
-        if(q1 == '{0, 1} & )
-        case():
-            
+        if(q1[0][0]&q2[0][0]) begin
+                values = 2'd3;
+        end else if (!q1[0][0]&!q2[0][0]) begin
+                values = 2'd0;
+        end else if (q1[0][0]&!q2[0][0]) begin
+                values = 2'd2;
+        end else if (!q1[0][0]&q2[0][0]) begin
+                values = 2'd1;
+        end 
+
+        case (values)
+            2'd0 : begin
+                    q1ent = '{'{0}, '{1}};
+                    q2ent = '{'{0}, '{1}};
+                end
+            2'd1 : begin
+                    q1ent = '{'{0}, '{1}};
+                    q2ent = '{'{1}, '{0}};
+                end
+            2'd2 : begin
+                    q1ent = '{'{1}, '{0}};
+                    q2ent = '{'{1}, '{0}};
+                end
+            2'd3 : begin
+                    q1ent = '{'{1}, '{0}};
+                    q2ent = '{'{0}, '{1}};
+                end
+        endcase
     end
+
 endmodule
 
 
