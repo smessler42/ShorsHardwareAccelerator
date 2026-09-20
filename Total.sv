@@ -62,20 +62,20 @@ module CNOTentangled (
 
         case (values)
             2'd0 : begin
-                    q1ent = '{'{0}, '{1}};
-                    q2ent = '{'{0}, '{1}};
+                    q1ent = '{'{2'sd0}, '{2'sd1}};
+                    q2ent = '{'{2'sd0}, '{2'sd1}};
                 end
             2'd1 : begin
-                    q1ent = '{'{0}, '{1}};
-                    q2ent = '{'{1}, '{0}};
+                    q1ent = '{'{2'sd0}, '{2'sd1}};
+                    q2ent = '{'{2'sd1}, '{2'sd0}};
                 end
             2'd2 : begin
-                    q1ent = '{'{1}, '{0}};
-                    q2ent = '{'{1}, '{0}};
+                    q1ent = '{'{2'sd1}, '{2'sd0}};
+                    q2ent = '{'{2'sd1}, '{2'sd0}};
                 end
             2'd3 : begin
-                    q1ent = '{'{1}, '{0}};
-                    q2ent = '{'{0}, '{1}};
+                    q1ent = '{'{2'sd1}, '{2'sd0}};
+                    q2ent = '{'{2'sd0}, '{2'sd1}};
                 end
         endcase
     end
