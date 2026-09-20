@@ -144,12 +144,11 @@ module bit_flip_detect(
             e2 <= c22;
             end
             3'd4: begin
-            q1 <= h1; 
-            q2 <= h2;
+            e1 <= h1; 
+            e2 <= h2;
             end
             3'd5: begin
-            out1 <= q1[0]; 
-            out2 <= q2[0];
+            error <= {e1[0][0][0], e1[0][1][0]};
             end
             default: counter <= 0;
         endcase
