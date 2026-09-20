@@ -20,11 +20,24 @@ module top (
 end 
 
 module entangle(
-  input logic qbit[1][2],
-  output logic qbit1[1][2],
+  input logic qbit1[1][2],
+  input logic qbit2[1][2],
+  output logic qbit1_new[1][2],
+  output logic qbit2_new[1][2]
 );
+const state_t CNOT [4][4] = '{
+    '{1.0, 0.0, 0.0, 0.0},
+    '{0.0, 1.0, 0.0, 0.0},
+    '{0.0, 0.0, 0.0, 1.0},
+    '{0.0, 0.0, 1.0, 0.0}
+  };
 
-  qbit1 = qbit; 
+logic state_array[1][4];
+
+  for (int i = 0; i < 2; i++) begin
+    state_array[1]
+  end
+
 endmodule
 
 module matrix_mult(
@@ -93,16 +106,94 @@ module shors_error_check(
   logic qbit_h[1][2];
   logic qbit1_h[1][2];
   logic qbit2_h[1][2];
+  //hadamard gates initial phase
   hadamard_gate(qbit, qbit_h);
   hadamard_gate(qbit1, qbit1_h);
   hadamard_gate(qbit2, qbit2_h);
-  
+
+  //qbit_h refers to initial qbit post hadamard gate
   entangle(qbit_h, qbit3);
   entangle(qbit_h, qbit4);
   entangle(qbit1_h, qbit5);
   entangle(qbit1_h, qbit6);
   entangle(qbit2_h, qbit7);
   entangle(qbit2_h, qbit8);
-  
+
+  //error generation
+  if (location = 3'b000) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit_h); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit_h); 
+    end
+  end 
+  else if (location = 3'b001) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit3); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit3); 
+    end
+  end 
+  else if (location = 3'b010) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit4); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit4); 
+    end
+  end
+  else if (location = 3'b011) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit1_h); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit1_h); 
+    end
+  end
+else if (location = 3'b100) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit5); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit5); 
+    end
+  end
+else if (location = 3'b101) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit6); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit6); 
+    end
+  end
+else if (location = 3'b110) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit2_h); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit2_h); 
+    end
+  end
+else if (location = 3'b110) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit7); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit7); 
+    end
+  end
+else if (location = 3'b111) begin 
+    if (x_flip = 1'b1) begin
+      x_flip(qbit8); 
+    end 
+    if (z_flip = 1'b1) begin 
+      z_flip(qbit8); 
+    end
+  end
+
+
+
 endmodule
 end
