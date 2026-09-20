@@ -1,32 +1,34 @@
 module top (
-    input logic signed [1:0] input [2][1];
+    input logic signed [1:0] q_in [2][1];
     input logic xflip, zflip;
     input logic [2:0] location;
-    output logic error1, error2;
+    output logic [1:0] error;
 );
 
     logic signed [1:0] CNOT [4][4] = '{
-    '{1, 0, 0, 0},
-    '{0, 1, 0, 0},
-    '{0, 0, 0, 1},
-    '{0, 0, 1, 0}
+        '{2'sd1, 2'sd0, 2'sd0, 2'sd0},
+        '{2'sd0, 2'sd1, 2'sd0, 2'sd0},
+        '{2'sd0, 2'sd0, 2'sd0, 2'sd1},
+        '{2'sd0, 2'sd0, 2'sd1, 2'sd0}
     };
 
     logic signed [1:0] HGATE [2][2] = '{
-    '{1, 1},
-    '{1, -1}
+        '{ 2'sd1,  2'sd1},
+        '{ 2'sd1, -2'sd1}
     };
 
     logic signed [1:0] XGATE [2][2] = '{
-    '{0, 1},
-    '{1, 0}
+        '{2'sd0, 2'sd1},
+        '{2'sd1, 2'sd0}
     };
     logic signed [1:0] ZGATE [2][2] = '{
-    '{1, 0},
-    '{0, -1}
+        '{2'sd1,  2'sd0},
+        '{2'sd0, -2'sd1}
     };    
 
     logic signed [1:0] q1, q2 [2][1];
+
+    
 
 
 endmodule
