@@ -120,17 +120,13 @@ module cnot_entangled (
     output logic signed [1:0] q2ent [2][1]
 );
 
-    // Control qubit q1 passes straight through
     assign q1ent = q1;
 
     always_comb begin
-        // If control qubit q1 is in state |1> (row [1][0] has amplitude)
         if (q1[1][0] != 2'sd0) begin
-            // Target qubit q2 is bit-flipped (swaps row 0 and row 1)
             q2ent[0][0] = q2[1][0];
             q2ent[1][0] = q2[0][0];
         end else begin
-            // Otherwise, target qubit passes through unperturbed
             q2ent = q2;
         end
     end
