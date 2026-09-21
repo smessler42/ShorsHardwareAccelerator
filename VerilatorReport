@@ -1,0 +1,70 @@
+================================================================
+       QUANTUM ERROR INJECTION & DETECTION TEST HARNESS        
+================================================================
+
+------------------------------------------------------------
+ Running TEST 1: Ideal State (No Error): Injecting Error Code = 2'b00
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [1, 0] | Q2: [1, 0] | Q3: [1, 0]
+  Syndrome Readout : 2'b00
+  Target Location  : No Error Expected
+  Detected Location: No Error Detected
+
+------------------------------------------------------------
+ Running TEST 2: Bit Flip on Qubit 1: Injecting Error Code = 2'b01
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [0, 1] | Q2: [1, 0] | Q3: [1, 0]
+  Syndrome Readout : 2'b10
+  Target Location  : Qubit 1 Flown/Flipped
+  Detected Location:  Fault on Qubit 2
+
+------------------------------------------------------------
+ Running TEST 3: Bit Flip on Qubit 2: Injecting Error Code = 2'b10
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [1, 0] | Q2: [0, 1] | Q3: [1, 0]
+  Syndrome Readout : 2'b11
+  Target Location  : Qubit 2 Flown/Flipped
+  Detected Location:  Fault on Qubit 3
+
+------------------------------------------------------------
+ Running TEST 4: Bit Flip on Qubit 3: Injecting Error Code = 2'b11
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [1, 0] | Q2: [1, 0] | Q3: [0, 1]
+  Syndrome Readout : 2'b01
+  Target Location  : Qubit 3 Flown/Flipped
+  Detected Location:  Fault on Qubit 1
+
+================================================================
+       RE-TESTING WITH BASIS STATE |1> (|111> Cluster)         
+================================================================
+
+------------------------------------------------------------
+ Running TEST 5: Bit Flip on Qubit 1 in |111>: Injecting Error Code = 2'b01
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [1, 0] | Q2: [0, 1] | Q3: [0, 1]
+  Syndrome Readout : 2'b10
+  Target Location  : Qubit 1 Flown/Flipped
+  Detected Location:  Fault on Qubit 2
+
+------------------------------------------------------------
+ Running TEST 6: Bit Flip on Qubit 2 in |111>: Injecting Error Code = 2'b10
+------------------------------------------------------------
+  State Vectors after injection:
+    Q1: [0, 1] | Q2: [1, 0] | Q3: [0, 1]
+  Syndrome Readout : 2'b11
+  Target Location  : Qubit 2 Flown/Flipped
+  Detected Location:  Fault on Qubit 3
+
+================================================================
+                    ALL TESTS COMPLETED                         
+================================================================
+- /data/tmp/smessler42/sim/sim_smessler42_zrwtpzry/testbench.v:164: Verilog $finish
+
+- S i m u l a t i o n   R e p o r t: Verilator 5.052 2026-09-05
+- Verilator: $finish at 495ns; walltime 0.001 s; speed 346.620 us/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 4 MB
